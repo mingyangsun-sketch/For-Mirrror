@@ -87,7 +87,11 @@
       <view class="meta-err" wx:if="{{aiError}}">AI报错：{{aiError}}</view>
 
       <view class="card {{index === 0 ? 'card--first' : ''}}" wx:for="{{list}}" wx:key="id">
-        <view class="rank {{index < 3 ? 'rank--top' : ''}}">{{index + 1}}</view>
+        <view class="card-thumb-wrap">
+          <image wx:if="{{item.thumb}}" class="card-thumb" src="{{item.thumb}}" mode="aspectFill" lazy-load></image>
+          <view wx:else class="card-thumb card-thumb--ph">🍽</view>
+          <view class="rank-badge {{index < 3 ? 'rank-badge--top' : ''}}">{{index + 1}}</view>
+        </view>
         <view class="card-body">
           <view class="card-top">
             <text class="name">{{item.name}}</text>

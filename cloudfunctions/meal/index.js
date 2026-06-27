@@ -116,23 +116,32 @@ function roundCoord(n) {
 
 // 高德 v5 周边搜索
 async function amapSearch(latitude, longitude, keyword) {
-  const url =
+  const base =
     `https://restapi.amap.com/v5/place/around?key=${CONFIG.AMAP_KEY}` +
     `&location=${longitude.toFixed(6)},${latitude.toFixed(6)}` +
     `&keywords=${encodeURIComponent(keyword)}` +
-    `&radius=${CONFIG.SEARCH_RADIUS}&page_size=15&page_num=1&show_fields=business`;
-  const { text } = await httpRequest(url);
+    `&radius=${CONFIG.SEARCH_RADIUS}&page_size=15&page_num=1`;
+
+  async function call(showFields) {
+    const { text } = await httpRequest(`${base}&show_fields=${showFields}`);
+    return JSON.parse(text);
+  }
+
+  // 先试带 photos；若高德不支持(无权限/报错)，退回不带 photos，保证搜索不挂
   let json;
   try {
-    json = JSON.parse(text);
+    json = await call("business,photos");
+    if (!json || json.status !== "1") json = await call("business");
   } catch (e) {
-    throw new Error("高德返回非 JSON：" + text.slice(0, 120));
+    json = await call("business");
   }
-  if (json.status !== "1") {
-    throw new Error(`高德错误 ${json.infocode}: ${json.info}`);
+  if (!json || json.status !== "1") {
+    throw new Error(`高德错误 ${json && json.infocode}: ${json && json.info}`);
   }
   return (json.pois || []).map((p) => {
     const loc = (p.location || "").split(",");
+    const raw = Array.isArray(p.photos) && p.photos[0] && p.photos[0].url ? p.photos[0].url : "";
+    const thumb = raw ? raw.replace(/^http:\/\//, "https://") : "";
     return {
       id: String(p.id),
       name: p.name,
@@ -141,6 +150,7 @@ async function amapSearch(latitude, longitude, keyword) {
       tel: (p.business && p.business.tel) || "",
       distance: p.distance != null ? Math.round(Number(p.distance)) : null,
       location: loc.length === 2 ? { lng: Number(loc[0]), lat: Number(loc[1]) } : null,
+      thumb,
       matchedBy: keyword,
     };
   });
