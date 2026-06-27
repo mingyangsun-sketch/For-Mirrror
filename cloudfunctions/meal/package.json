@@ -1,0 +1,14 @@
+{
+  "name": "meal",
+  "version": "1.0.0",
+  "description": "三餐推荐云函数：拉取周边餐厅 + 天气 + 口味历史，交给 GLM 打分排序",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "wx-server-sdk": "~2.4.0"
+  }
+}

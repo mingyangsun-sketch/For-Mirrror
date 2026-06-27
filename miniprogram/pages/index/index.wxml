@@ -1,0 +1,116 @@
+<!--推荐页-->
+<view class="page">
+  <!-- 顶部 Hero：整张图做背景，文字压在上面 -->
+  <view class="hero-card">
+    <image class="hero-bg" src="{{heroImg}}" mode="aspectFill"></image>
+    <view class="hero-scrim"></view>
+    <view class="hero-content">
+      <view class="greeting">{{greeting}}</view>
+      <view class="subtitle">{{mealLabel}}想吃什么？</view>
+      <view class="hero-weather" wx:if="{{weather}}">🌡 {{weather.temp}}° · {{weather.text}}</view>
+    </view>
+  </view>
+
+  <view class="body">
+    <!-- 折叠后的摘要条 -->
+    <view class="summary-bar" wx:if="{{panelCollapsed}}" bindtap="onEditIntent">
+      <view class="summary-left">
+        <text class="summary-label">本次想吃</text>
+        <text class="summary-text">{{summaryText}}</text>
+      </view>
+      <text class="summary-edit">重新选 ›</text>
+    </view>
+
+    <!-- 意向采集面板 -->
+    <view class="panel" wx:if="{{!panelCollapsed}}">
+      <!-- 想吃什么(品类) -->
+      <view class="field-label">想吃什么 <text class="field-tip">选了按这个推，不选随机</text></view>
+      <view class="chips">
+        <view
+          class="chip chip-crave {{craving === c.key ? 'chip-crave--active' : ''}}"
+          wx:for="{{cravingOptions}}"
+          wx:for-item="c"
+          wx:key="key"
+          data-key="{{c.key}}"
+          bindtap="onToggleCraving"
+        >{{c.label}}</view>
+      </view>
+
+      <!-- 中性品类的二级选择 -->
+      <view class="chips chips-variant" wx:if="{{cravingVariants.length}}">
+        <view
+          class="chip chip-variant {{cravingVariant === v.key ? 'chip-variant--active' : ''}}"
+          wx:for="{{cravingVariants}}"
+          wx:for-item="v"
+          wx:key="key"
+          data-key="{{v.key}}"
+          bindtap="onSelectVariant"
+        >{{v.label}}<text class="vd" wx:if="{{v.desc}}"> · {{v.desc}}</text></view>
+      </view>
+      <view class="hint-inline" wx:if="{{cravingVariants.length && !cravingVariant}}">↑ 可选个口味，不选都给你看看</view>
+
+      <!-- 时间松紧 -->
+      <view class="field-label">时间松紧</view>
+      <view class="urgency">
+        <view
+          class="urg-item {{urgency === u.key ? 'urg-item--active' : ''}}"
+          wx:for="{{urgencyOptions}}"
+          wx:for-item="u"
+          wx:key="key"
+          data-key="{{u.key}}"
+          bindtap="onSelectUrgency"
+        >
+          <view class="urg-label">{{u.label}}</view>
+          <view class="urg-desc">{{u.desc}}</view>
+        </view>
+      </view>
+
+      <button class="btn-submit" bindtap="onSubmit">{{btnLabel}}</button>
+    </view>
+
+    <!-- 加载中 -->
+    <view class="hint" wx:if="{{loading}}">
+      <view class="spinner"></view>
+      <text>正在帮你挑店…</text>
+    </view>
+
+    <!-- 错误/空态 -->
+    <view class="hint" wx:if="{{!loading && errMsg}}">
+      <text class="hint-err">{{errMsg}}</text>
+      <button class="btn-line" wx:if="{{errMsg.indexOf('定位') > -1}}" bindtap="openSetting">去开启定位</button>
+      <button class="btn-line" wx:else bindtap="onRefresh">重试</button>
+    </view>
+
+    <!-- 推荐列表 -->
+    <view class="list" wx:if="{{!loading && list.length}}">
+      <view class="meta-debug" wx:if="{{debugText}}">{{debugText}}</view>
+      <view class="meta-err" wx:if="{{aiError}}">AI报错：{{aiError}}</view>
+
+      <view class="card {{index === 0 ? 'card--first' : ''}}" wx:for="{{list}}" wx:key="id">
+        <view class="rank {{index < 3 ? 'rank--top' : ''}}">{{index + 1}}</view>
+        <view class="card-body">
+          <view class="card-top">
+            <text class="name">{{item.name}}</text>
+            <text class="score" wx:if="{{item.score !== null}}">{{item.score}}</text>
+          </view>
+          <view class="tags">
+            <text class="tag" wx:if="{{item.category}}">{{item.category}}</text>
+            <text class="tag tag-dist" wx:if="{{item.distance !== null}}">📍{{item.distance}}m</text>
+          </view>
+          <view class="reason" wx:if="{{item.reason}}">{{item.reason}}</view>
+
+          <view class="actions">
+            <view class="fb-group">
+              <view class="fb {{item.fed === 'like' ? 'fb--like' : ''}}" data-index="{{index}}" data-fb="like" bindtap="onFeedback">😋</view>
+              <view class="fb {{item.fed === 'ok' ? 'fb--ok' : ''}}" data-index="{{index}}" data-fb="ok" bindtap="onFeedback">😐</view>
+              <view class="fb {{item.fed === 'no' ? 'fb--no' : ''}}" data-index="{{index}}" data-fb="no" bindtap="onFeedback">🙅</view>
+            </view>
+            <view class="nav" data-index="{{index}}" bindtap="openMap" wx:if="{{item.location}}">导航 ›</view>
+          </view>
+        </view>
+      </view>
+
+      <button class="btn-refresh" bindtap="onRefresh">🔄 换一批</button>
+    </view>
+  </view>
+</view>

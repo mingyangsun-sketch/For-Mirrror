@@ -1,0 +1,62 @@
+/* 历史记录页 */
+page {
+  background: #f6f6f6;
+}
+.page {
+  padding: 24rpx;
+}
+.hint {
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+  padding: 120rpx 40rpx;
+  line-height: 1.6;
+}
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 26rpx 24rpx;
+  margin-bottom: 16rpx;
+}
+.item-left {
+  flex: 1;
+  min-width: 0;
+}
+.item-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #222;
+}
+.item-sub {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+.dot {
+  margin: 0 10rpx;
+}
+.item-note {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+.badge {
+  flex-shrink: 0;
+  margin-left: 20rpx;
+  font-size: 24rpx;
+  color: #fff;
+  border-radius: 999rpx;
+  padding: 6rpx 18rpx;
+}
+.fb-like {
+  background: #ff7a45;
+}
+.fb-ok {
+  background: #f5b942;
+}
+.fb-no {
+  background: #bbb;
+}

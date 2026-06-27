@@ -1,0 +1,20 @@
+<!--历史记录页-->
+<view class="page">
+  <view class="hint" wx:if="{{loading}}">加载中…</view>
+  <view class="hint" wx:elif="{{!list.length}}">还没有吃饭记录，去推荐页点几个反馈吧～</view>
+
+  <view class="item" wx:for="{{list}}" wx:key="_id">
+    <view class="item-left">
+      <view class="item-name">{{item.restaurant.name}}</view>
+      <view class="item-sub">
+        <text>{{item.date}}</text>
+        <text class="dot">·</text>
+        <text>{{item.mealLabel}}</text>
+        <text class="dot" wx:if="{{item.restaurant.category}}">·</text>
+        <text wx:if="{{item.restaurant.category}}">{{item.restaurant.category}}</text>
+      </view>
+      <view class="item-note" wx:if="{{item.note}}">{{item.note}}</view>
+    </view>
+    <view class="badge {{item.fbCls}}" wx:if="{{item.fbText}}">{{item.fbText}}</view>
+  </view>
+</view>
